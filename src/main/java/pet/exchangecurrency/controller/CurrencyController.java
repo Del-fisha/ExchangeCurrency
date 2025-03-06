@@ -3,15 +3,11 @@ package pet.exchangecurrency.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pet.exchangecurrency.dto.CurrencyDto;
 import pet.exchangecurrency.service.CurrencyCrudService;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +37,55 @@ public class CurrencyController {
     @GetMapping("/currencies")
     public ResponseEntity<Collection<CurrencyDto>> getAll() {
         return new ResponseEntity<>(currencyService.getAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/currency/id/{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+        try {
+            CurrencyDto currencyDto = currencyService.getById(id);
+            return new ResponseEntity<>(currencyDto, HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/currency/{code}")
+    public ResponseEntity<?> getByCode(@PathVariable("code") String code) {
+        try{
+            CurrencyDto currencyDto = currencyService.getByCode(code);
+            return new ResponseEntity<>(currencyDto, HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/currency/id/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
+        try {
+            currencyService.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/currency/{code}")
+    public ResponseEntity<?> deleteByCode(@PathVariable("code") String code) {
+        try {
+            currencyService.deleteByCode(code);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/currencies")
+    public ResponseEntity<?> update(CurrencyDto currencyDto) {
+        try {
+            CurrencyDto dto = currencyService.update(currencyDto);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (NullPointerException nullPointerException) {
+            return new ResponseEntity<>(nullPointerException.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 }

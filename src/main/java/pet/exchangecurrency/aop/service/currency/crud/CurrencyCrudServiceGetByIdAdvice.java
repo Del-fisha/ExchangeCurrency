@@ -10,24 +10,25 @@ import org.springframework.stereotype.Component;
 import pet.exchangecurrency.dto.CurrencyDto;
 
 @Aspect
-@Component
 @Slf4j
-class CurrencyCrudServiceCreateAspect {
+@Component
+public class CurrencyCrudServiceGetByIdAdvice {
 
-    @Before("execution(* pet.exchangecurrency.service.CurrencyCrudService.create(..)) && args(dto)")
-    public void beforeCreate(JoinPoint joinPoint, CurrencyDto dto) {
-        log.info("\n{}\nМетод {}()\nПодготовка к созданию валюты: {}\n",
+    @Before("execution(* pet.exchangecurrency.service.CurrencyCrudService.getById(..))")
+    public void beforeGetById(JoinPoint joinPoint) {
+        log.info("\n{}\nМетод {}()\nПодготовка к получению валюты по ID {}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
-                dto);
+                joinPoint.getArgs());
     }
 
-    @AfterReturning(value = "execution(* pet.exchangecurrency.service.CurrencyCrudService.create(..))",
+    @AfterReturning(value = "execution(* pet.exchangecurrency.service.CurrencyCrudService.getById(..))",
             returning = "result")
-    public void afterCreateReturning(JoinPoint joinPoint, CurrencyDto result) {
-        log.info("\n{}\nМетод {}()\nВалюта успешно создана {}\n",
+    public void afterGetById(JoinPoint joinPoint, CurrencyDto result) {
+        log.info("\n{}\nМетод {}()\nПолучена валюта по ID {}\n{}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
+                result.getId(),
                 result);
     }
 }

@@ -8,7 +8,6 @@ import pet.exchangecurrency.model.Currency;
 import pet.exchangecurrency.repository.CurrencyRepository;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +19,7 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     @Override
     public CurrencyDto create(CurrencyDto dto) {
         Currency currency = new Currency();
-        currency.setCode(dto.getCode());
+        currency.setCode(dto.getCode().toUpperCase());
         currency.setFullName(dto.getFullName());
         currency.setSign(dto.getSign());
 
@@ -30,13 +29,19 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
 
     @Override
     public CurrencyDto getById(long id) {
-        Currency currency = currencyRepository.findById(id).orElse(null);
-
-        return null;
+        Currency currency = currencyRepository.findById(id).orElse(null); // ToDo Обработать исключения
+        if (currency == null) {
+            throw new NullPointerException("Currency not found");
+        }
+        return DtoConverter.convertCurrencyToDto(currency);
     }
 
-    public CurrencyDto getCurrent(String code) {
-        return null;
+    public CurrencyDto getByCode(String code) {
+        Currency currency = currencyRepository.findByCode(code.toUpperCase());
+        if (currency == null) {
+            throw new NullPointerException("Currency not found");
+        }
+        return DtoConverter.convertCurrencyToDto(currency);
     }
 
     @Override
@@ -48,13 +53,33 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     }
 
     @Override
-    public void update(CurrencyDto dto) {
+    public CurrencyDto update(CurrencyDto dto) {
+        Currency currency = currencyRepository.findById(dto.getId()).orElse(null);
+        if (currency == null) {
+            throw new NullPointerException("Currency not found");
+        }
+        currency.setCode(dto.getCode().toUpperCase());
+        currency.setSign(dto.getSign());
+        currency.setFullName(dto.getFullName());
+        currency = currencyRepository.save(currency);
 
+        return DtoConverter.convertCurrencyToDto(currency);
     }
 
     @Override
-    public void delete(long id) {
-
+    public void deleteById(long id) {
+        Currency currency = currencyRepository.findById(id).orElse(null);
+        if (currency == null) {
+            throw new NullPointerException("Currency not found");
+        }
+        currencyRepository.delete(currency);
     }
 
+    public void deleteByCode(String code) {
+        Currency currency = currencyRepository.findByCode(code.toUpperCase());
+        if (currency == null) {
+            throw new NullPointerException("Currency not found");
+        }
+        currencyRepository.delete(currency);
+    }
 }

@@ -10,8 +10,8 @@ public interface CrudServiceInterface <T> {
 
     public Collection<T> getAll();
 
-    public void update(T dto);
+    public T update(T dto);
 
-    public void delete(long id);
+    public void deleteById(long id);
 
 }
