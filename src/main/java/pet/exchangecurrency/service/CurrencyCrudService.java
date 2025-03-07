@@ -2,7 +2,7 @@ package pet.exchangecurrency.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pet.exchangecurrency.convert.DtoConverter;
+import pet.exchangecurrency.utilits.DtoConverter;
 import pet.exchangecurrency.dto.CurrencyDto;
 import pet.exchangecurrency.model.Currency;
 import pet.exchangecurrency.repository.CurrencyRepository;

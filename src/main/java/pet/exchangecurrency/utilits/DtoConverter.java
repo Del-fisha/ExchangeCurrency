@@ -1,4 +1,4 @@
-package pet.exchangecurrency.convert;
+package pet.exchangecurrency.utilits;
 
 import pet.exchangecurrency.dto.CurrencyDto;
 import pet.exchangecurrency.model.Currency;
