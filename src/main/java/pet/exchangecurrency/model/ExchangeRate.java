@@ -23,5 +23,11 @@ public class ExchangeRate {
     private Currency targetCurrency;
 
     @Column(name = "rate")
-    private long rate;
+    private double rate;
+
+    @Override
+    public String toString() {
+        return String.format("id=%d, baseCurrencyId=%s, targetCurrencyId=%s, Rate=%f",
+                id, baseCurrency, targetCurrency, rate);
+    }
 }

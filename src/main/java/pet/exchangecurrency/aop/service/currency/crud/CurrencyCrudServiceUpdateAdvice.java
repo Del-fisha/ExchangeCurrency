@@ -11,7 +11,7 @@ import pet.exchangecurrency.dto.CurrencyDto;
 @Aspect
 @Component
 @Slf4j
-public class CurrencyCrudServiceUpdateAspect {
+public class CurrencyCrudServiceUpdateAdvice {
 
     @Before("execution(* pet.exchangecurrency.service.CurrencyCrudService.update(..)) && args(dto)")
     public void beforeUpdate(JoinPoint joinPoint, CurrencyDto dto) {

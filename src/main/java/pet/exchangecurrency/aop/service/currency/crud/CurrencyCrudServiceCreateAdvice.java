@@ -3,7 +3,6 @@ package pet.exchangecurrency.aop.service.currency.crud;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,7 @@ import pet.exchangecurrency.dto.CurrencyDto;
 @Aspect
 @Component
 @Slf4j
-class CurrencyCrudServiceCreateAspect {
+class CurrencyCrudServiceCreateAdvice {
 
     @Before("execution(* pet.exchangecurrency.service.CurrencyCrudService.create(..)) && args(dto)")
     public void beforeCreate(JoinPoint joinPoint, CurrencyDto dto) {

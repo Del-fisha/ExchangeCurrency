@@ -1,4 +1,4 @@
-package pet.exchangecurrency.aop.controller.currency.crud;
+package pet.exchangecurrency.aop.controller.crud;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -9,20 +9,20 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-public class CurrencyControllerAspect {
+public class CrudControllerAdvice {
 
-    @Pointcut("execution(* pet.exchangecurrency.controller.CurrencyController.*(..))")
-    public void createCurrencyMethod() {
+    @Pointcut("execution(* pet.exchangecurrency.controller.*.*(..))")
+    public void pointcutForCurrencyController() {
     }
 
-    @Before("createCurrencyMethod()")
-    public void logBeforeCreateCurrency(JoinPoint joinPoint) {
+    @Before("pointcutForCurrencyController()")
+    public void logBeforeControllerMethod(JoinPoint joinPoint) {
         log.info("\n{}\nМетод {}()\nОбращение в контроллер\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName());
     }
 
-    @AfterReturning(pointcut = "createCurrencyMethod()", returning = "result")
+    @AfterReturning(pointcut = "pointcutForCurrencyController()", returning = "result")
     public void logAfterReturningCreateCurrency(JoinPoint joinPoint, Object result) {
         log.info("\n{}\nМетод {}()\nМетод выполнен.\nРезультат: {}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
@@ -30,12 +30,12 @@ public class CurrencyControllerAspect {
                 result);
     }
 
-    @AfterThrowing(pointcut = "createCurrencyMethod()", throwing = "exception")
+    @AfterThrowing(pointcut = "pointcutForCurrencyController()", throwing = "exception")
     public void logAfterThrowingCreateCurrency(JoinPoint joinPoint, Throwable exception) {
         log.error("\nCONTROLLER:\nИсключение в методе {}: {}\n", joinPoint.getSignature(), exception.getMessage());
     }
 
-    @Around("createCurrencyMethod()")
+    @Around("pointcutForCurrencyController()")
     public Object logAroundCreateCurrency(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();

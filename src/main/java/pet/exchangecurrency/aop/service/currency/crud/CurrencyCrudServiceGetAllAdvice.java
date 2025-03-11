@@ -13,7 +13,7 @@ import java.util.Collection;
 @Aspect
 @Component
 @Slf4j
-public class CurrencyCrudServiceGetAllAspect {
+public class CurrencyCrudServiceGetAllAdvice {
 
     @Before("execution(* pet.exchangecurrency.service.CurrencyCrudService.getAll(..))")
     public void beforeGetAll(JoinPoint joinPoint) {
