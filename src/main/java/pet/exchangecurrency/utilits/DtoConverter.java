@@ -30,18 +30,19 @@ public class DtoConverter {
         return currency;
     }
 
+
     public static ExchangeRateDto convertExchangeRateToDto(ExchangeRate rate) {
         return new ExchangeRateDto(rate.getId(),
-                rate.getBaseCurrency().getCode(),
-                rate.getTargetCurrency().getCode(),
+                convertCurrencyToDto(rate.getBaseCurrency()),
+                convertCurrencyToDto(rate.getTargetCurrency()),
                 rate.getRate());
     }
 
     public static ExchangeConvertedDto convertExchangeRateToConvertDto(ExchangeRate rate) {
         ExchangeRateDto rateDto = new ExchangeRateDto(
                 rate.getId(),
-                rate.getBaseCurrency().getCode(),
-                rate.getTargetCurrency().getCode(),
+                convertCurrencyToDto(rate.getBaseCurrency()),
+                convertCurrencyToDto(rate.getTargetCurrency()),
                 rate.getRate());
 
         return new ExchangeConvertedDto(rateDto);

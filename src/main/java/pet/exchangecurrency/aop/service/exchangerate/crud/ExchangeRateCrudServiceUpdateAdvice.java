@@ -18,8 +18,8 @@ public class ExchangeRateCrudServiceUpdateAdvice {
         log.info("\n{}\nМетод {}()\nПодготовка к обновлению плана обмена ({} на {})\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
-                dto.getBaseCurrencyCode(),
-                dto.getTargetCurrencyCode());
+                dto.getBaseCurrency(),
+                dto.getTargetCurrency());
     }
 
     @AfterReturning(value = "execution(* pet.exchangecurrency.service.ExchangeCrudService.update(..))",

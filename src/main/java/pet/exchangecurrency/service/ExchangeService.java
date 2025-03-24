@@ -13,14 +13,18 @@ public class ExchangeService {
 
     final ExchangeRateRepository exchangeRateRepository;
 
-    public ExchangeConvertedDto getExchange(String baseCurrencyCode, String targetCurrencyCode, double amount) {
+    public ExchangeConvertedDto getExchange(
+            String baseCurrencyCode,
+            String targetCurrencyCode,
+            double amount) {
+
         ExchangeRate exchangeRate = exchangeRateRepository.findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
-                baseCurrencyCode,
-                targetCurrencyCode);
+                baseCurrencyCode.toUpperCase(),
+                targetCurrencyCode.toUpperCase());
 
         ExchangeConvertedDto exchangeDto = DtoConverter.convertExchangeRateToConvertDto(exchangeRate);
         exchangeDto.setAmount(amount);
-        exchangeDto.setConvertedAmount(exchangeDto.getAmount() * exchangeDto.getConvertedAmount());
+        exchangeDto.setConvertedAmount(exchangeDto.getAmount() * exchangeDto.getRate());
 
         return exchangeDto;
     }

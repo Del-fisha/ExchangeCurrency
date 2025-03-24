@@ -24,11 +24,21 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
     @Override
     public ExchangeRateDto create(ExchangeRateDto dto) {
         ExchangeRate rate = new ExchangeRate();
-        rate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrencyCode()));
-        rate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrencyCode()));
+        rate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrency().getCode()));
+        rate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrency().getCode()));
         rate.setRate(dto.getRate());
 
         ExchangeRate savedRate = exchangeRateRepository.save(rate);
+        return DtoConverter.convertExchangeRateToDto(savedRate);
+    }
+
+    public ExchangeRateDto create(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setBaseCurrency(currencyRepository.findByCode(baseCurrencyCode.toUpperCase()));
+        exchangeRate.setTargetCurrency(currencyRepository.findByCode(targetCurrencyCode.toUpperCase()));
+        exchangeRate.setRate(rate);
+
+        ExchangeRate savedRate = exchangeRateRepository.save(exchangeRate);
         return DtoConverter.convertExchangeRateToDto(savedRate);
     }
 
@@ -73,8 +83,8 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
             throw new IllegalArgumentException();
         }
 
-        exchangeRateToUpdate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrencyCode().toUpperCase()));
-        exchangeRateToUpdate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrencyCode().toUpperCase()));
+        exchangeRateToUpdate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrency().getCode().toUpperCase()));
+        exchangeRateToUpdate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrency().getCode().toUpperCase()));
         exchangeRateToUpdate.setRate(dto.getRate());
 
         ExchangeRate savedRate = exchangeRateRepository.save(exchangeRateToUpdate);

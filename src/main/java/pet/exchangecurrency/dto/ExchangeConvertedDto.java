@@ -1,5 +1,6 @@
 package pet.exchangecurrency.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,11 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ExchangeConvertedDto extends ExchangeRateDto {
+
+    @JsonIgnore
+    private Long id;
     double amount;
     double convertedAmount;
 
     public ExchangeConvertedDto(ExchangeRateDto rate) {
-        super(rate.baseCurrencyCode, rate.targetCurrencyCode, rate.rate);
+        super(rate.baseCurrency, rate.targetCurrency, rate.rate);
     }
 
     public ExchangeConvertedDto(ExchangeRateDto rate, double amount) {
@@ -24,7 +28,7 @@ public class ExchangeConvertedDto extends ExchangeRateDto {
 
     @Override
     public String toString() {
-        return String.format("id=%d, baseCurrencyCode=%s, targetCurrencyCode=%s, Rate=%f, Amount=%f, ConvertedAmount=%f",
-                id, baseCurrencyCode, targetCurrencyCode, rate, amount, convertedAmount);
+        return String.format("baseCurrency=%s, targetCurrency=%s, Rate=%f, Amount=%f, ConvertedAmount=%f",
+                baseCurrency.getCode(), targetCurrency.code, rate, amount, convertedAmount);
     }
 }

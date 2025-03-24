@@ -14,9 +14,12 @@ public class ExchangeRateController {
     private final ExchangeCrudService exchangeCrudService;
 
     @PostMapping("/exchangerates")
-    public ResponseEntity<?> create(@ModelAttribute ExchangeRateDto dto) {
+    public ResponseEntity<?> create(
+            @RequestParam("baseCurrencyCode") String baseCurrencyCode,
+            @RequestParam("targetCurrencyCode") String targetCurrencyCode,
+            @RequestParam("rate") double rate) {
         try {
-            ExchangeRateDto result = exchangeCrudService.create(dto);
+            ExchangeRateDto result = exchangeCrudService.create(baseCurrencyCode, targetCurrencyCode, rate);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         } catch (NullPointerException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

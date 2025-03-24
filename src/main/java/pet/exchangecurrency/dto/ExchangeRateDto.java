@@ -13,25 +13,25 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ExchangeRateDto implements Serializable {
-    Long id;
-    String baseCurrencyCode;
-    String targetCurrencyCode;
+    private Long id;
+    CurrencyDto baseCurrency;
+    CurrencyDto targetCurrency;
     double rate;
 
-    public ExchangeRateDto(String baseCurrencyCode, String targetCurrencyCode, double rate) {
-        this.baseCurrencyCode = baseCurrencyCode;
-        this.targetCurrencyCode = targetCurrencyCode;
+    public ExchangeRateDto(CurrencyDto baseCurrency, CurrencyDto targetCurrency, double rate) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public ExchangeRateDto(Long id, String baseCurrencyCode, String targetCurrencyCode, double rate) {
-        this(baseCurrencyCode, targetCurrencyCode, rate);
+    public ExchangeRateDto(Long id, CurrencyDto baseCurrency, CurrencyDto targetCurrency, double rate) {
+        this(baseCurrency, targetCurrency, rate);
         this.id = id;
     }
 
     @Override
     public String toString() {
         return String.format("id=%d, baseCurrencyCode=%s, targetCurrencyCode=%s, Rate=%f",
-                id, baseCurrencyCode, targetCurrencyCode, rate);
+                id, baseCurrency, targetCurrency, rate);
     }
 }

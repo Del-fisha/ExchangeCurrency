@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
-import pet.exchangecurrency.dto.CurrencyDto;
 import pet.exchangecurrency.dto.ExchangeRateDto;
 
 @Aspect
@@ -19,8 +18,8 @@ public class ExchangeRateCrudServiceCreateAdvice {
         log.info("\n{}\nМетод {}()\nПодготовка к созданию нового плана обмена: \n{} на \n{}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
-                dto.getBaseCurrencyCode(),
-                dto.getTargetCurrencyCode());
+                dto.getBaseCurrency(),
+                dto.getTargetCurrency());
     }
 
     @AfterReturning(value = "execution(* pet.exchangecurrency.service.CurrencyCrudService.create(..))",

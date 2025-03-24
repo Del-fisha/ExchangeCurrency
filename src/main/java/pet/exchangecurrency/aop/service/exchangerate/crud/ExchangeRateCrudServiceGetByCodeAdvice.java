@@ -27,8 +27,8 @@ public class ExchangeRateCrudServiceGetByCodeAdvice {
         log.info("\n{}\nМетод {}()\nПолучена обменная пара по code {} {}\n{}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
-                result.getBaseCurrencyCode(),
-                result.getTargetCurrencyCode(),
+                result.getBaseCurrency(),
+                result.getTargetCurrency(),
                 result);
     }
 }
