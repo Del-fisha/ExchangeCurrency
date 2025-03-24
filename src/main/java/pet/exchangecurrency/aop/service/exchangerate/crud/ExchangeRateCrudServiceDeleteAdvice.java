@@ -11,7 +11,7 @@ import pet.exchangecurrency.dto.CurrencyDto;
 @Aspect
 @Slf4j
 @Component
-public class ExchangeCrudServiceDeleteAdvice {
+public class ExchangeRateCrudServiceDeleteAdvice {
 
     @Before("execution(* pet.exchangecurrency.service.ExchangeCrudService.deleteById(..))")
     public void beforeDeleteById(JoinPoint joinPoint) {

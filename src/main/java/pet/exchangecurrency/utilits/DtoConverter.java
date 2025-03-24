@@ -2,6 +2,7 @@ package pet.exchangecurrency.utilits;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import pet.exchangecurrency.dto.CurrencyDto;
+import pet.exchangecurrency.dto.ExchangeConvertedDto;
 import pet.exchangecurrency.dto.ExchangeRateDto;
 import pet.exchangecurrency.model.Currency;
 import pet.exchangecurrency.model.ExchangeRate;
@@ -34,5 +35,15 @@ public class DtoConverter {
                 rate.getBaseCurrency().getCode(),
                 rate.getTargetCurrency().getCode(),
                 rate.getRate());
+    }
+
+    public static ExchangeConvertedDto convertExchangeRateToConvertDto(ExchangeRate rate) {
+        ExchangeRateDto rateDto = new ExchangeRateDto(
+                rate.getId(),
+                rate.getBaseCurrency().getCode(),
+                rate.getTargetCurrency().getCode(),
+                rate.getRate());
+
+        return new ExchangeConvertedDto(rateDto);
     }
 }

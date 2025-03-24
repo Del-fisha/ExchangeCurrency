@@ -15,11 +15,11 @@ public class ExchangeRate {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "base_currency_id")
+    @JoinColumn(name = "base_currency_id", nullable = false)
     private Currency baseCurrency;
 
     @ManyToOne
-    @JoinColumn(name = "target_currency_id")
+    @JoinColumn(name = "target_currency_id", nullable = false)
     private Currency targetCurrency;
 
     @Column(name = "rate")

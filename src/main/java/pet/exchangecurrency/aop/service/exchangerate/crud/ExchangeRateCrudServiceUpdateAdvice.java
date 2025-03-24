@@ -6,27 +6,26 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
-import pet.exchangecurrency.dto.CurrencyDto;
 import pet.exchangecurrency.dto.ExchangeRateDto;
 
 @Aspect
 @Component
 @Slf4j
-public class ExchangeCrudServiceCreateAdvice {
+public class ExchangeRateCrudServiceUpdateAdvice {
 
-    @Before("execution(* pet.exchangecurrency.service.ExchangeCrudService.create(..)) && args(dto)")
+    @Before("execution(* pet.exchangecurrency.service.ExchangeCrudService.update(..)) && args(dto)")
     public void beforeCreate(JoinPoint joinPoint, ExchangeRateDto dto) {
-        log.info("\n{}\nМетод {}()\nПодготовка к созданию нового плана обмена: \n{} на \n{}\n",
+        log.info("\n{}\nМетод {}()\nПодготовка к обновлению плана обмена ({} на {})\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
                 dto.getBaseCurrencyCode(),
                 dto.getTargetCurrencyCode());
     }
 
-    @AfterReturning(value = "execution(* pet.exchangecurrency.service.CurrencyCrudService.create(..))",
+    @AfterReturning(value = "execution(* pet.exchangecurrency.service.ExchangeCrudService.update(..))",
             returning = "result")
-    public void afterCreateReturning(JoinPoint joinPoint, CurrencyDto result) {
-        log.info("\n{}\nМетод {}()\nПлан обмена успешно создан {}\n",
+    public void afterCreateReturning(JoinPoint joinPoint, ExchangeRateDto result) {
+        log.info("\n{}\nМетод {}()\nПлан обмена успешно обновлён {}\n",
                 joinPoint.getSignature().getDeclaringType().getSimpleName(),
                 joinPoint.getSignature().getName(),
                 result);

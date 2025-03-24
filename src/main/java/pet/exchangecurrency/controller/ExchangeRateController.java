@@ -47,5 +47,24 @@ public class ExchangeRateController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/exchangerates")
+    public ResponseEntity<?> update(@ModelAttribute ExchangeRateDto dto) {
+        try {
+            ExchangeRateDto result = exchangeCrudService.update(dto);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (IllegalArgumentException argumentException) {
+            return new ResponseEntity<>(argumentException.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/exchangerates/{codecode}")
+    public ResponseEntity<?> patch(@PathVariable String codecode, @RequestParam double rate) {
+        try {
+            return new ResponseEntity<>(exchangeCrudService.updateRate(codecode, rate), HttpStatus.OK);
+        } catch (IllegalArgumentException argumentException) {
+            return new ResponseEntity<>(argumentException.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
 

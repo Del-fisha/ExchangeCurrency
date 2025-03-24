@@ -11,7 +11,6 @@ import pet.exchangecurrency.utilits.CodeSplitUtility;
 import pet.exchangecurrency.utilits.DtoConverter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,19 +42,18 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
     }
 
     public ExchangeRateDto getByCode(String code) {
-        Currency baseCurrency = currencyRepository.findByCode(CodeSplitUtility.splitCode(code).get(0).toUpperCase());
-        Currency targetCurrency = currencyRepository.findByCode(CodeSplitUtility.splitCode(code).get(1).toUpperCase());
+        Currency baseCurrency = currencyRepository
+                .findByCode(CodeSplitUtility.splitCode(code).get(0).toUpperCase());
+        Currency targetCurrency = currencyRepository
+                .findByCode(CodeSplitUtility.splitCode(code).get(1).toUpperCase());
 
-        List<ExchangeRate> allByBaseCurrencyLike =
-                exchangeRateRepository.findAllByBaseCurrencyCodeLike(baseCurrency.getCode());
-        ExchangeRate rate = allByBaseCurrencyLike.stream()
-                .filter(r -> r.getTargetCurrency().equals(targetCurrency))
-                .findFirst().orElse(null);
-
-        System.out.println(rate);
-        if (allByBaseCurrencyLike.isEmpty() || rate == null) {
+        if (baseCurrency == null || targetCurrency == null) {
             throw new IllegalArgumentException();
         }
+        ExchangeRate rate = exchangeRateRepository
+                .findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
+                        baseCurrency.getCode(),
+                        targetCurrency.getCode());
 
         return DtoConverter.convertExchangeRateToDto(rate);
     }
@@ -68,7 +66,39 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
 
     @Override
     public ExchangeRateDto update(ExchangeRateDto dto) {
-        return null;
+        ExchangeRate exchangeRateToUpdate =
+                exchangeRateRepository.findById(dto.getId()).orElse(null);
+
+        if (exchangeRateToUpdate == null) {
+            throw new IllegalArgumentException();
+        }
+
+        exchangeRateToUpdate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrencyCode().toUpperCase()));
+        exchangeRateToUpdate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrencyCode().toUpperCase()));
+        exchangeRateToUpdate.setRate(dto.getRate());
+
+        ExchangeRate savedRate = exchangeRateRepository.save(exchangeRateToUpdate);
+
+        return DtoConverter.convertExchangeRateToDto(savedRate);
+    }
+
+    public ExchangeRateDto updateRate(String code, Double rate) {
+        Currency baseCurrency = currencyRepository
+                .findByCode(CodeSplitUtility.splitCode(code).get(0).toUpperCase());
+        Currency targetCurrency = currencyRepository
+                .findByCode(CodeSplitUtility.splitCode(code).get(1).toUpperCase());
+
+        if (baseCurrency == null || targetCurrency == null) {
+            throw new IllegalArgumentException();
+        }
+        ExchangeRate rateToUpdate = exchangeRateRepository
+                .findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
+                        baseCurrency.getCode(),
+                        targetCurrency.getCode());
+        rateToUpdate.setRate(rate);
+        ExchangeRate savedRate = exchangeRateRepository.save(rateToUpdate);
+
+        return DtoConverter.convertExchangeRateToDto(savedRate);
     }
 
     @Override

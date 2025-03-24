@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class ExchangeRateDto implements Serializable {
-    private Long id;
-    private String baseCurrencyCode;
-    private String targetCurrencyCode;
-    private double rate;
+    Long id;
+    String baseCurrencyCode;
+    String targetCurrencyCode;
+    double rate;
 
     public ExchangeRateDto(String baseCurrencyCode, String targetCurrencyCode, double rate) {
         this.baseCurrencyCode = baseCurrencyCode;
