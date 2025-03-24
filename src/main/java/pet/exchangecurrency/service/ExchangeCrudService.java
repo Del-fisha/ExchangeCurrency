@@ -3,6 +3,10 @@ package pet.exchangecurrency.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pet.exchangecurrency.dto.ExchangeRateDto;
+import pet.exchangecurrency.exceptions.exchangeRate.CurrencyPairNotExistingException;
+import pet.exchangecurrency.exceptions.exchangeRate.CurrencyPairNotFoundException;
+import pet.exchangecurrency.exceptions.exchangeRate.DuplicateCurrencyPairException;
+import pet.exchangecurrency.exceptions.exchangeRate.ExchangeRateNotFoundException;
 import pet.exchangecurrency.model.Currency;
 import pet.exchangecurrency.model.ExchangeRate;
 import pet.exchangecurrency.repository.CurrencyRepository;
@@ -23,19 +27,41 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
 
     @Override
     public ExchangeRateDto create(ExchangeRateDto dto) {
-        ExchangeRate rate = new ExchangeRate();
-        rate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrency().getCode()));
-        rate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrency().getCode()));
-        rate.setRate(dto.getRate());
+        ExchangeRate rate =
+                exchangeRateRepository.findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
+                        dto.getBaseCurrency().getCode().toUpperCase(),
+                        dto.getTargetCurrency().getCode().toUpperCase());
+        if (rate != null) {
+            throw new DuplicateCurrencyPairException();
+        } else {
+            rate = new ExchangeRate();
+            rate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrency().getCode().toUpperCase()));
+            rate.setTargetCurrency(currencyRepository.findByCode(dto.getTargetCurrency().getCode().toUpperCase()));
+            if (rate.getBaseCurrency() == null || rate.getTargetCurrency() == null) {
+                throw new CurrencyPairNotExistingException();
+            }
+            rate.setRate(dto.getRate());
+        }
 
         ExchangeRate savedRate = exchangeRateRepository.save(rate);
         return DtoConverter.convertExchangeRateToDto(savedRate);
     }
 
     public ExchangeRateDto create(String baseCurrencyCode, String targetCurrencyCode, double rate) {
+        ExchangeRate savedExchangeRate =
+                exchangeRateRepository.findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
+                        baseCurrencyCode,
+                        targetCurrencyCode);
+        if (savedExchangeRate != null) {
+            throw new DuplicateCurrencyPairException();
+        }
         ExchangeRate exchangeRate = new ExchangeRate();
         exchangeRate.setBaseCurrency(currencyRepository.findByCode(baseCurrencyCode.toUpperCase()));
         exchangeRate.setTargetCurrency(currencyRepository.findByCode(targetCurrencyCode.toUpperCase()));
+        if (exchangeRate.getBaseCurrency() == null || exchangeRate.getTargetCurrency() == null) {
+            throw new CurrencyPairNotExistingException();
+        }
+
         exchangeRate.setRate(rate);
 
         ExchangeRate savedRate = exchangeRateRepository.save(exchangeRate);
@@ -46,7 +72,7 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
     public ExchangeRateDto getById(long id) {
         ExchangeRate rate = exchangeRateRepository.findById(id).orElse(null);
         if (rate == null) {
-            throw new IllegalArgumentException();
+            throw new CurrencyPairNotFoundException();
         }
         return DtoConverter.convertExchangeRateToDto(rate);
     }
@@ -58,7 +84,7 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
                 .findByCode(CodeSplitUtility.splitCode(code).get(1).toUpperCase());
 
         if (baseCurrency == null || targetCurrency == null) {
-            throw new IllegalArgumentException();
+            throw new CurrencyPairNotExistingException();
         }
         ExchangeRate rate = exchangeRateRepository
                 .findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
@@ -80,7 +106,7 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
                 exchangeRateRepository.findById(dto.getId()).orElse(null);
 
         if (exchangeRateToUpdate == null) {
-            throw new IllegalArgumentException();
+            throw new ExchangeRateNotFoundException();
         }
 
         exchangeRateToUpdate.setBaseCurrency(currencyRepository.findByCode(dto.getBaseCurrency().getCode().toUpperCase()));
@@ -99,7 +125,7 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
                 .findByCode(CodeSplitUtility.splitCode(code).get(1).toUpperCase());
 
         if (baseCurrency == null || targetCurrency == null) {
-            throw new IllegalArgumentException();
+            throw new CurrencyPairNotExistingException();
         }
         ExchangeRate rateToUpdate = exchangeRateRepository
                 .findByBaseCurrencyCodeLikeAndTargetCurrencyCode(
@@ -116,7 +142,7 @@ public class ExchangeCrudService implements CrudServiceInterface<ExchangeRateDto
         try {
             exchangeRateRepository.deleteById(id);
         } catch (IllegalArgumentException argumentException) {
-            throw new RuntimeException();
+            throw new ExchangeRateNotFoundException();
         }
     }
 }

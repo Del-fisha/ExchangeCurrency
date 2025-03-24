@@ -21,7 +21,7 @@ public class ExchangeRateController {
         try {
             ExchangeRateDto result = exchangeCrudService.create(baseCurrencyCode, targetCurrencyCode, rate);
             return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (NullPointerException e) {
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

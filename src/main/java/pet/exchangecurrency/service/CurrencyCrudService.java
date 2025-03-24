@@ -2,10 +2,14 @@ package pet.exchangecurrency.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pet.exchangecurrency.utilits.DtoConverter;
 import pet.exchangecurrency.dto.CurrencyDto;
+import pet.exchangecurrency.exceptions.Currency.CurrencyNotFoundException;
+import pet.exchangecurrency.exceptions.Currency.DuplicateCurrencyCodeException;
+import pet.exchangecurrency.exceptions.Currency.MissingCodeException;
+import pet.exchangecurrency.exceptions.general.MissingFormFieldException;
 import pet.exchangecurrency.model.Currency;
 import pet.exchangecurrency.repository.CurrencyRepository;
+import pet.exchangecurrency.utilits.DtoConverter;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -18,11 +22,19 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
 
     @Override
     public CurrencyDto create(CurrencyDto dto) {
+        if (dto == null || dto.getCode().isEmpty() || dto.getSign().isEmpty() || dto.getFullName().isEmpty()) {
+            throw new MissingFormFieldException();
+        }
+
+        Currency currencyDto = currencyRepository.findByCode(dto.getCode());
+        if (currencyDto != null) {
+            throw new DuplicateCurrencyCodeException();
+        }
+
         Currency currency = new Currency();
         currency.setCode(dto.getCode().toUpperCase());
         currency.setFullName(dto.getFullName());
         currency.setSign(dto.getSign());
-
         Currency savedCurrency = currencyRepository.save(currency);
         return DtoConverter.convertCurrencyToDto(savedCurrency);
     }
@@ -31,15 +43,18 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     public CurrencyDto getById(long id) {
         Currency currency = currencyRepository.findById(id).orElse(null); // ToDo Обработать исключения
         if (currency == null) {
-            throw new NullPointerException("Currency not found");
+            throw new CurrencyNotFoundException();
         }
         return DtoConverter.convertCurrencyToDto(currency);
     }
 
     public CurrencyDto getByCode(String code) {
+        if (code == null || code.isEmpty()) {
+            throw new MissingCodeException();
+        }
         Currency currency = currencyRepository.findByCode(code.toUpperCase());
         if (currency == null) {
-            throw new NullPointerException("Currency not found");
+            throw new CurrencyNotFoundException();
         }
         return DtoConverter.convertCurrencyToDto(currency);
     }
@@ -56,7 +71,7 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     public CurrencyDto update(CurrencyDto dto) {
         Currency currency = currencyRepository.findById(dto.getId()).orElse(null);
         if (currency == null) {
-            throw new NullPointerException("Currency not found");
+            throw new CurrencyNotFoundException();
         }
         currency.setCode(dto.getCode().toUpperCase());
         currency.setSign(dto.getSign());
@@ -70,7 +85,7 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     public void deleteById(long id) {
         Currency currency = currencyRepository.findById(id).orElse(null);
         if (currency == null) {
-            throw new NullPointerException("Currency not found");
+            throw new CurrencyNotFoundException();
         }
         currencyRepository.delete(currency);
     }
@@ -78,7 +93,7 @@ public class CurrencyCrudService implements CrudServiceInterface<CurrencyDto> {
     public void deleteByCode(String code) {
         Currency currency = currencyRepository.findByCode(code.toUpperCase());
         if (currency == null) {
-            throw new NullPointerException("Currency not found");
+            throw new CurrencyNotFoundException();
         }
         currencyRepository.delete(currency);
     }

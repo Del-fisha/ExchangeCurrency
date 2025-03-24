@@ -18,6 +18,8 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
             @Param("baseCurrencyCode") String baseCurrencyCode,
             @Param("targetCurrencyCode") String targetCurrencyCode);
 
+    // Todo Проблема в добавлении новой пары (Если она есть в базе, то всё равно создаётся новая)
+
     @Query("SELECT e FROM ExchangeRate e WHERE e.baseCurrency.code LIKE %:baseCurrencyCode% AND e.targetCurrency.code = :targetCurrencyCode")
     ExchangeConvertedDto findByBaseCurrencyCodeAndTargetCurrencyCode(
             @Param("baseCurrencyCode") String baseCurrencyCode,
